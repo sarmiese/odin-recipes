@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rive Interactive Button</title>
+  <script src="https://unpkg.com/@rive-app/webgl@2.7.0"></script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f0f0f0;
+      margin: 0;
+    }
+
+    canvas {
+      width: 900px;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="riveButton" width="900" ></canvas>
+
+<script>
+  let isMenuOpen = false;
+
+  const riveInstance = new rive.Rive({
+    src: "ButtonPress.riv", // Ensure this is in the same folder as this HTML file
+    canvas: document.getElementById("riveButton"),
+    autoplay: true,
+    stateMachines: ["State Machine 1"],
+    onLoad: () => {
+      const canvas = document.getElementById("riveButton");
+
+      // Get all inputs
+      const inputs = riveInstance.stateMachineInputs("State Machine 1");
+      const clickInput = inputs.find(i => i.name === "Click");
+      const clickBackInput = inputs.find(i => i.name === "ClickBack");
+      const hoverInput = inputs.find(i => i.name === "Hover");
+
+      // Handle hover
+      canvas.addEventListener("mouseenter", () => {
+        if (hoverInput && hoverInput.type === "boolean") {
+          hoverInput.value = true;
+        }
+      });
+
+      canvas.addEventListener("mouseleave", () => {
+        if (hoverInput && hoverInput.type === "boolean") {
+          hoverInput.value = false;
+        }
+      });
+
+      // Handle click to toggle menu
+      canvas.addEventListener("click", () => {
+        if (isMenuOpen) {
+          clickBackInput?.fire();
+        } else {
+          clickInput?.fire();
+        }
+        isMenuOpen = !isMenuOpen;
+      });
+    }
+  });
+</script>
+
+</body>
+</html>
